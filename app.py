@@ -8,8 +8,8 @@ import json
 import base64
 import uuid
 from datetime import datetime
+from io import BytesIO
 from flask import Flask, render_template, request, jsonify, send_file, abort, redirect, url_for
-from weasyprint import HTML
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ganti-dengan-secret-key-anda'
@@ -243,51 +243,153 @@ def api_status():
 
 
 # ─────────────────────────────────────────
-# PDF FILLING FUNCTION
+# PDF FILLING FUNCTION (ReportLab)
 # ─────────────────────────────────────────
 
 def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
-    """
-    Generate PDF from HTML template with participant data and signature.
-    Uses base64 embedded images for WeasyPrint compatibility.
-    """
-    from jinja2 import Environment, FileSystemLoader
+    from reportlab.lib.pagesizes import landscape, A4
+    from reportlab.lib.units import cm
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+    from reportlab.lib import colors
 
     tanggal = datetime.now().strftime("Koba, %B %Y")
-    nip = nik
-    sig_b64 = base64.b64encode(signature_bytes).decode('ascii')
+    sig_stream = BytesIO(signature_bytes)
 
-    logo_babel_b64 = ""
-    ttd_b64 = ""
+    page_width, page_height = landscape(A4)
+    margin = 1 * cm
+    usable_width = page_width - 2 * margin
+    col_width = usable_width / 2
 
-    try:
-        with open('logo_babel.jpg', 'rb') as f:
-            logo_babel_b64 = base64.b64encode(f.read()).decode('ascii')
-    except Exception:
-        pass
-
-    try:
-        with open('ttd.jpg', 'rb') as f:
-            ttd_b64 = base64.b64encode(f.read()).decode('ascii')
-    except Exception:
-        pass
-
-    env = Environment(loader=FileSystemLoader('templates'))
-    template = env.get_template('document.html')
-
-    html_out = template.render(
-        nama=nama,
-        nip=nip,
-        jabatan=jabatan,
-        instansi=instansi,
-        tanggal=tanggal,
-        signature_data=sig_b64,
-        logo_babel=logo_babel_b64,
-        ttd=ttd_b64
+    doc = SimpleDocTemplate(
+        output_path,
+        pagesize=landscape(A4),
+        leftMargin=margin,
+        rightMargin=margin,
+        topMargin=margin,
+        bottomMargin=margin,
     )
 
-    base_url = 'file://' + os.path.abspath('.')
-    HTML(string=html_out, base_url=base_url).write_pdf(output_path)
+    styles = {
+        "center_header": ParagraphStyle("CenterHeader", fontName="Helvetica-Bold", fontSize=11, alignment=TA_CENTER, spaceAfter=3),
+        "title": ParagraphStyle("Title", fontName="Helvetica-Bold", fontSize=13, alignment=TA_CENTER, spaceAfter=6),
+        "section": ParagraphStyle("Section", fontName="Helvetica", fontSize=10, alignment=TA_LEFT, spaceAfter=6),
+        "item_text": ParagraphStyle("ItemText", fontName="Helvetica", fontSize=10, alignment=TA_JUSTIFY, leading=14, spaceAfter=3),
+        "date": ParagraphStyle("Date", fontName="Helvetica", fontSize=11, alignment=TA_CENTER, spaceAfter=6),
+        "sig_label": ParagraphStyle("SigLabel", fontName="Helvetica", fontSize=9, alignment=TA_CENTER, leading=12),
+        "sig_name": ParagraphStyle("SigName", fontName="Helvetica-Bold", fontSize=10, alignment=TA_CENTER, leading=12),
+    }
+
+    elements = []
+
+    if os.path.exists("logo_babel.jpg"):
+        elements.append(Image("logo_babel.jpg", height=40, hAlign="CENTER"))
+        elements.append(Spacer(1, 0.2 * cm))
+
+    elements.append(Paragraph("PEMERINTAH PROVINSI KEPULAUAN BANGKA BELITUNG", styles["center_header"]))
+    elements.append(Paragraph("PAKTA INTEGRITAS", styles["title"]))
+
+    section_title = f"Saya, {nama}, selaku {jabatan} pada SMK Negeri 1 Koba, menyatakan sebagai berikut:"
+    elements.append(Paragraph(section_title, styles["section"]))
+
+    items_l = [
+        ("1.", "Berperan secara pro aktif dalam upaya pencegahan dan pemberantasan Korupsi. Kolusi dan Nepotisme serta tidak melibatkan diri dalam perbuatan tercela;"),
+        ("2.", "Tidak meminta atau menerima pemberian secara langsung atau tidak langsung berupa suap, hadiah, bantuan, atau bentuk lainnya yang tidak sesuai dengan ketentuan yang berlaku;"),
+        ("3.", "Bersikap transparan, jujur, obyektif, tanggung jawab, akuntabel dan profesional dalam melaksanakan tugas, serta patuh pada peraturan perundang-undangan, termasuk kewajiban penyampaian Laporan Hara Kekayaan Penyelenggara Negara (LHKPN) / SPT Tahunan secara tepat waktu;"),
+        ("4.", "Menghindari pertentangan kepentingan (conflict of interest) dalam pelaksanaan tugas;"),
+    ]
+    items_r = [
+        ("5.", "Menggunakan sepenuhnya fasilitas BMD untuk kelancaran tugas dan fungsi kedinasan, menjaga dan merawat aset BMD dengan baik dan mengembalikan aset BMD sesuai peraturan perundang-undangan;"),
+        ("6.", "Memberi contoh dalam kepatuhan terhadap peraturan perundang-undangan yang berlaku dalam melaksanaakan tugas, terutama kepada karyawan yang berada di bawah pengawasan saya dan sesama pegawai di lingkungan kerja saya secara konsisten;"),
+        ("7.", "Akan menyampaikan informasi penyimpangan integritas di SMK Negeri 1 Koba serta turut menjaga kerahasiaan saksi atas pelanggaran peraturan yang dilaporkannya;"),
+        ("8.", "Bila saya melanggar hal-hal tersebut di atas, saya siap menghadapi konsekuensinya."),
+    ]
+
+    def make_item_rows(n, t):
+        return [Paragraph(f"<b>{n}</b> {t}", styles["item_text"])]
+
+    left_rows = [make_item_rows(n, t) for n, t in items_l]
+    right_rows = [make_item_rows(n, t) for n, t in items_r]
+
+    left_tbl = Table(left_rows, colWidths=[col_width - 0.5 * cm])
+    left_tbl.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 2),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    ]))
+
+    right_tbl = Table(right_rows, colWidths=[col_width - 0.5 * cm])
+    right_tbl.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 2),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    ]))
+
+    two_col = Table([[left_tbl, right_tbl]], colWidths=[col_width, col_width])
+    two_col.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    elements.append(two_col)
+
+    elements.append(Spacer(1, 0.5 * cm))
+    elements.append(Paragraph(tanggal, styles["date"]))
+    elements.append(Spacer(1, 0.8 * cm))
+
+    sig_img = Image(sig_stream, width=120, height=50, hAlign="CENTER")
+
+    witness_rows = [
+        [Paragraph("Disaksikan/Diketahui:", styles["sig_label"])],
+        [Paragraph("Atasan Langsung", styles["sig_label"])],
+        [Paragraph("Kepala SMK Negeri 1 Koba", styles["sig_label"])],
+    ]
+    if os.path.exists("ttd.jpg"):
+        witness_rows.append([Image("ttd.jpg", width=100, height=45, hAlign="CENTER")])
+    witness_rows.append([Paragraph("SYAHRYANTO, S.T., M.Pd.", styles["sig_name"])])
+    witness_rows.append([Paragraph("NIP. 197708262006041005", styles["sig_label"])])
+
+    witness_tbl = Table(witness_rows, colWidths=[5 * cm])
+    witness_tbl.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
+        ("TOPPADDING", (0, 0), (-1, -1), 2),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    ]))
+
+    signer_rows = [
+        [Paragraph("Pembuat Pernyataan", styles["sig_label"])],
+        [sig_img],
+        [Paragraph(nama, styles["sig_name"])],
+        [Paragraph(f"NIP. {nik}", styles["sig_label"])],
+    ]
+
+    signer_tbl = Table(signer_rows, colWidths=[5 * cm])
+    signer_tbl.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
+        ("TOPPADDING", (0, 0), (-1, -1), 2),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+    ]))
+
+    sig_section = Table([[witness_tbl, signer_tbl]], colWidths=[col_width, col_width])
+    sig_section.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    elements.append(sig_section)
+
+    doc.build(elements)
 
 
 if __name__ == "__main__":

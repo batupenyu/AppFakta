@@ -1,4 +1,4 @@
 flask
-weasyprint
+reportlab
 pillow
 jinja2
