@@ -17,9 +17,9 @@
   .field { margin-bottom: 16px; }
   label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
   label span.req { color: #ef4444; }
-  input[type=text] { width: 100%; padding: 10px 14px; border: 1.5px solid #d1d5db;
-    border-radius: 8px; font-size: 14px; transition: border .2s; }
-  input[type=text]:focus { outline: none; border-color: #1a56db; }
+  input[type=text], select { width: 100%; padding: 10px 14px; border: 1.5px solid #d1d5db;
+    border-radius: 8px; font-size: 14px; transition: border .2s; background: white; }
+  input[type=text]:focus, select:focus { outline: none; border-color: #1a56db; }
   .sig-area { border: 2px dashed #cbd5e1; border-radius: 10px; overflow: hidden;
               background: #f8fafc; position: relative; }
   #sigCanvas { display: block; cursor: crosshair; touch-action: none; }
@@ -67,7 +67,14 @@
   </div>
   <div class="field">
     <label>Jabatan</label>
-    <input type="text" id="jabatan" placeholder="Jabatan / posisi Anda">
+    <select id="jabatan">
+      <option value="">Pilih jabatan</option>
+      <option value="Guru Ahli Pertama">Guru Ahli Pertama</option>
+      <option value="Guru Ahli Muda">Guru Ahli Muda</option>
+      <option value="Guru Ahli Madya">Guru Ahli Madya</option>
+      <option value="Bendahara">Bendahara</option>
+      <option value="Analis Sumber Daya Manusia Aparatu Ahli Muda">Analis Sumber Daya Manusia Aparatu Ahli Muda</option>
+    </select>
   </div>
   <div class="field">
     <label>Instansi / Unit Kerja</label>

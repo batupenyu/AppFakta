@@ -63,8 +63,8 @@
            display: none; z-index: 999; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
-  .field input { width: 100%; padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 14px; }
-  .field input:focus { outline: none; border-color: #1a56db; }
+  .field input, .field select { width: 100%; padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 14px; background: white; }
+  .field input:focus, .field select:focus { outline: none; border-color: #1a56db; }
 </style>
 </head>
 <body>
@@ -138,7 +138,16 @@
     <h3 style="margin:0 0 16px; font-size:16px; color:#1a56db;">✏️ Edit Data Peserta</h3>
     <div class="field"><label>Nama Lengkap <span style="color:#ef4444;">*</span></label><input type="text" id="editNama"></div>
     <div class="field"><label>NIK / NIP <span style="color:#ef4444;">*</span></label><input type="text" id="editNik"></div>
-    <div class="field"><label>Jabatan</label><input type="text" id="editJabatan"></div>
+    <div class="field"><label>Jabatan</label>
+      <select id="editJabatan">
+        <option value="">Pilih jabatan</option>
+        <option value="Guru Ahli Pertama">Guru Ahli Pertama</option>
+        <option value="Guru Ahli Muda">Guru Ahli Muda</option>
+        <option value="Guru Ahli Madya">Guru Ahli Madya</option>
+        <option value="Bendahara">Bendahara</option>
+        <option value="Analis Sumber Daya Manusia Aparatu Ahli Muda">Analis Sumber Daya Manusia Aparatu Ahli Muda</option>
+      </select>
+    </div>
     <div class="field"><label>Instansi / Unit Kerja</label><input type="text" id="editInstansi"></div>
     <div style="display:flex; gap:10px; margin-top:18px;">
       <button class="btn btn-submit" onclick="saveEdit()" style="flex:1;">💾 Simpan Perubahan</button>
