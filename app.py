@@ -395,7 +395,7 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     sig_section = Table([[witness_tbl, signer_tbl]], colWidths=[col_width, col_width])
     sig_section.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 150),
+        ("LEFTPADDING", (0, 0), (-1, -1), 130),
         ("RIGHTPADDING", (0, 0), (-1, -1), 0),
         ("TOPPADDING", (0, 0), (-1, -1), 0),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
