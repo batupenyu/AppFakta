@@ -10,11 +10,13 @@ import uuid
 from datetime import datetime
 from io import BytesIO
 from flask import Flask, render_template, request, jsonify, send_file, abort, redirect, url_for
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ganti-dengan-secret-key-anda'
 app.config['SIGNED_DIR'] = '/tmp/signed_pdfs' if os.path.exists('/tmp') else 'signed_pdfs'
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
+CORS(app)
 
 SUBMISSIONS_FILE = "submissions.json"
 
@@ -49,7 +51,7 @@ def get_next_id():
 @app.route("/")
 def index():
     """Halaman admin - monitor semua penandatanganan"""
-    public_link = request.host_url.rstrip('/') + '/sign'
+    public_link = request.url_root.rstrip('/') + '/sign'
     return render_template("index.html", submissions=submissions, public_link=public_link)
 
 

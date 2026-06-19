@@ -2,3 +2,4 @@ flask
 reportlab
 pillow
 jinja2
+flask-cors
