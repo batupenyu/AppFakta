@@ -291,6 +291,8 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
 
     elements.append(Paragraph("PEMERINTAH PROVINSI KEPULAUAN BANGKA BELITUNG", styles["center_header"]))
     elements.append(Paragraph("PAKTA INTEGRITAS", styles["title"]))
+    elements.append(Spacer(1, 0.4 * cm))
+    elements.append(Paragraph("PROVINSI KEPULAUAN BANGKA BELITUNG", styles["center_header"]))
 
     section_title = f"Saya, {nama}, selaku {jabatan} pada SMK Negeri 1 Koba, menyatakan sebagai berikut:"
     elements.append(Paragraph(section_title, styles["section"]))
