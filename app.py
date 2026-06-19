@@ -13,10 +13,8 @@ from flask import Flask, render_template, request, jsonify, send_file, abort, re
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ganti-dengan-secret-key-anda'
-app.config['SIGNED_DIR'] = 'signed_pdfs'
+app.config['SIGNED_DIR'] = '/tmp/signed_pdfs' if os.path.exists('/tmp') else 'signed_pdfs'
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
-
-os.makedirs(app.config['SIGNED_DIR'], exist_ok=True)
 
 SUBMISSIONS_FILE = "submissions.json"
 
@@ -256,6 +254,8 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
 
     tanggal = datetime.now().strftime("Koba, %B %Y")
     sig_stream = BytesIO(signature_bytes)
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     page_width, page_height = landscape(A4)
     margin = 1 * cm
