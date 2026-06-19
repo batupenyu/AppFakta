@@ -254,7 +254,9 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
     from reportlab.lib import colors
 
-    tanggal = datetime.now().strftime("Koba, %B %Y")
+    bulan_id = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+    tanggal = f"Koba, {bulan_id[datetime.now().month - 1]} {datetime.now().year}"
     sig_stream = BytesIO(signature_bytes)
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
