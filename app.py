@@ -365,8 +365,11 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
 
     if os.path.exists("ttd.jpg"):
         witness_rows.append([Image("ttd.jpg", width=100, height=45, hAlign="CENTER")])
-    witness_rows.append([Paragraph("SYAHRYANTO, S.T., M.Pd.", styles["sig_name"])])
-    witness_rows.append([Paragraph("NIP. 197708262006041005", styles["sig_label"])])
+    # witness_rows.append([Paragraph("SYAHRYANTO, S.T., M.Pd.", styles["sig_name"])])
+    # witness_rows.append([Paragraph("NIP. 197708262006041005", styles["sig_label"])])
+    witness_rows.append([
+        Paragraph("SYAHRYANTO, S.T., M.Pd.<br/><font size='8'>NIP. 197708262006041005</font>", styles["sig_name"])
+    ])
 
     witness_tbl = Table(witness_rows, colWidths=[5 * cm])
     witness_tbl.setStyle(TableStyle([
@@ -377,11 +380,13 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     ]))
 
     signer_rows = [
-        [Paragraph("Pembuat Pernyataan", styles["sig_label"])],
-        [Paragraph(jabatan, styles["sig_label"])],
+        # [Paragraph("Pembuat Pernyataan", styles["sig_label"])],
+        # [Paragraph(jabatan, styles["sig_label"])],
+        [Paragraph(f'Pembuat Pernyataan<br/><font size="8">{jabatan}</font>', styles["sig_label"])],
         [sig_img],
-        [Paragraph(nama, styles["sig_name"])],
-        [Paragraph(f"NIP. {nik}", styles["sig_label"])],
+        # [Paragraph(nama, styles["sig_name"])],
+        # [Paragraph(f"NIP. {nik}", styles["sig_label"])],
+        [Paragraph(f'{nama}<br/><font size="8">NIP. {nik}</font>', styles["sig_name"])],
     ]
 
     signer_tbl = Table(signer_rows, colWidths=[5 * cm])
