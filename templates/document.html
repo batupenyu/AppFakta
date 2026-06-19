@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<style>
+@page { size: A4 landscape; margin: 1cm; }
+body { font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.3; }
+h1 { text-align: center; font-size: 13pt; font-weight: bold; margin: 3px 0; }
+.center-header { text-align: center; font-weight: bold; margin-bottom: 5px; }
+.logo { text-align: center; margin-bottom: 5px; }
+.logo img { height: 50px; }
+.date { text-align: center; margin: 15px 0; font-size: 11pt; }
+.section-title { margin: 15px 0 8px 0; font-weight: bold; }
+.num { width: 22px; vertical-align: top; font-weight: bold; text-align: right; padding-right: 6px; }
+.txt { vertical-align: top; text-align: justify; }
+.signature-section { margin-top: 30px; }
+.signature-table { width: 100%; table-layout: fixed; }
+.signature-table td { width: 50%; text-align: center; vertical-align: top; padding: 0 10px; }
+.sig-img { height: 55px; width: auto; object-fit: contain; margin: 0.5cm 0; }
+</style>
+</head>
+<body>
+
+<div class="logo">{% if logo_babel %}<img src="data:image/png;base64,{{ logo_babel }}" alt="Logo">{% endif %}</div>
+<div class="center-header">PEMERINTAH PROVINSI KEPULAUAN BANGKA BELITUNG</div>
+<h1>PAKTA INTEGRITAS</h1>
+
+<div class="section-title" style="padding-left: 15px;">Saya, {{ nama }}, selaku {{ jabatan }} pada SMK Negeri 1 Koba, menyatakan sebagai berikut:</div>
+
+<table style="width: 100%; border-collapse: collapse;">
+  <tr>
+    <td style="width: 50%; padding-right: 15px; vertical-align: top;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr><td class="num">1.</td><td class="txt">Berperan secara pro aktif dalam upaya pencegahan dan pemberantasan Korupsi. Kolusi dan Nepotisme serta tidak melibatkan diri dalam perbuatan tercela;</td></tr>
+        <tr><td class="num">2.</td><td class="txt">Tidak meminta atau menerima pemberian secara langsung atau tidak langsung berupa suap, hadiah, bantuan, atau bentuk lainnya yang tidak sesuai dengan ketentuan yang berlaku;</td></tr>
+        <tr><td class="num">3.</td><td class="txt">Bersikap transparan, jujur, obyektif, tanggung jawab, akuntabel dan profesional dalam melaksanakan tugas, serta patuh pada peraturan perundang-undangan, termasuk kewajiban penyampaian Laporan Hara Kekayaan Penyelenggara Negara (LHKPN) / SPT Tahunan secara tepat waktu;</td></tr>
+        <tr><td class="num">4.</td><td class="txt">Menghindari pertentangan kepentingan (conflict of interest) dalam pelaksanaan tugas;</td></tr>
+      </table>
+    </td>
+    <td style="vertical-align: top;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr><td class="num">5.</td><td class="txt">Menggunakan sepenuhnya fasilitas BMD untuk kelancaran tugas dan fungsi kedinasan, menjaga dan merawat aset BMD dengan baik dan mengembalikan aset BMD sesuai peraturan perundang-undangan;</td></tr>
+        <tr><td class="num">6.</td><td class="txt">Memberi contoh dalam kepatuhan terhadap peraturan perundang-undangan yang berlaku dalam melaksanaakan tugas, terutama kepada karyawan yang berada di bawah pengawasan saya dan sesama pegawai di lingkungan kerja saya secara konsisten;</td></tr>
+        <tr><td class="num">7.</td><td class="txt">Akan menyampaikan informasi penyimpangan integritas di SMK Negeri 1 Koba serta turut menjaga kerahasiaan saksi atas pelanggaran peraturan yang dilaporkannya;</td></tr>
+        <tr><td class="num">8.</td><td class="txt">Bila saya melanggar hal-hal tersebut di atas, saya siap menghadapi konsekuensinya.</td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<div class="date">{{ tanggal }}</div>
+
+<div class="signature-section">
+  <table class="signature-table">
+    <tr>
+      <td>Disaksikan/Diketahui:<br>Atasan Langsung<br>Kepala SMK Negeri 1 Koba<br>
+        {% if ttd %}<img src="data:image/png;base64,{{ ttd }}" class="sig-img">{% endif %}<br>
+        SYAHRYANTO, S.T., M.Pd.<br>NIP. 197708262006041005
+      </td>
+      <td>
+        <br>
+        <br>
+        Pembuat Pernyataan,<br>
+        <img src="data:image/png;base64,{{ signature_data }}" class="sig-img"><br>
+        {{ nama }}<br>NIP. {{ nip }}
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

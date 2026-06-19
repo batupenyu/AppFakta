@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Tanda Tangan - Pakta Integritas</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+  .header { background: #1a56db; color: white; padding: 18px 24px; }
+  .header h1 { font-size: 18px; }
+  .header p  { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+          max-width: 600px; margin: 24px auto; padding: 28px; }
+  .card h2 { font-size: 16px; color: #1a56db; margin-bottom: 20px;
+             padding-bottom: 10px; border-bottom: 2px solid #e5edff; }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+  label span.req { color: #ef4444; }
+  input[type=text] { width: 100%; padding: 10px 14px; border: 1.5px solid #d1d5db;
+    border-radius: 8px; font-size: 14px; transition: border .2s; }
+  input[type=text]:focus { outline: none; border-color: #1a56db; }
+  .sig-area { border: 2px dashed #cbd5e1; border-radius: 10px; overflow: hidden;
+              background: #f8fafc; position: relative; }
+  #sigCanvas { display: block; cursor: crosshair; touch-action: none; }
+  .sig-toolbar { display: flex; gap: 8px; padding: 8px 10px;
+                 background: #f1f5f9; border-top: 1px solid #e2e8f0; }
+  .btn { padding: 8px 18px; border-radius: 7px; font-size: 13px; font-weight: 600;
+         cursor: pointer; border: none; transition: opacity .2s; }
+  .btn:hover { opacity: .85; }
+  .btn-clear  { background: #e5e7eb; color: #374151; }
+  .btn-submit { background: #1a56db; color: white; width: 100%;
+                 padding: 13px; font-size: 15px; border-radius: 8px;
+                 margin-top: 6px; cursor: pointer; border: none; font-weight: 600; }
+  .btn-submit:disabled { background: #93c5fd; cursor: not-allowed; }
+  .hint { font-size: 12px; color: #6b7280; margin-top: 6px; }
+  .alert { border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 14px; }
+  .alert-warning { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .alert-success { background: #dcfce7; color: #14532d; border: 1px solid #86efac; }
+  .alert-error   { background: #fee2e2; color: #7f1d1d; border: 1px solid #fca5a5; }
+  .done-box { text-align: center; padding: 30px 20px; }
+  .done-box .icon { font-size: 56px; }
+  .done-box h3 { font-size: 20px; margin: 10px 0 6px; color: #16a34a; }
+  .done-box p  { color: #666; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>✍️ Form Tanda Tangan Elektronik</h1>
+  <p>Isi data dan tanda tangani dokumen Pakta Integritas</p>
+</div>
+
+<div class="card">
+  <div class="alert alert-warning">
+    ⚠️ Pastikan data yang Anda isi sudah benar sebelum mengirim. Dokumen <strong>tidak dapat diubah</strong> setelah ditandatangani.
+  </div>
+
+  <h2>📝 Data Diri</h2>
+  <div class="field">
+    <label>Nama Lengkap <span class="req">*</span></label>
+    <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda">
+  </div>
+  <div class="field">
+    <label>NIK / NIP <span class="req">*</span></label>
+    <input type="text" id="nik" placeholder="Nomor Induk Kependudukan / Pegawai">
+  </div>
+  <div class="field">
+    <label>Jabatan</label>
+    <input type="text" id="jabatan" placeholder="Jabatan / posisi Anda">
+  </div>
+  <div class="field">
+    <label>Instansi / Unit Kerja</label>
+    <input type="text" id="instansi" placeholder="Nama instansi atau unit kerja">
+  </div>
+
+  <h2 style="margin-top:24px;">🖊️ Tanda Tangan</h2>
+  <div class="sig-area">
+    <canvas id="sigCanvas" width="544" height="180"></canvas>
+    <div class="sig-toolbar">
+      <button class="btn btn-clear" onclick="clearSig()">🗑 Hapus</button>
+      <span style="font-size:12px;color:#6b7280;align-self:center;">Gambar tanda tangan Anda di area atas</span>
+    </div>
+  </div>
+  <p class="hint">* Gunakan mouse atau jari (layar sentuh) untuk membuat tanda tangan</p>
+
+  <div id="msg-area" style="margin-top:14px;"></div>
+
+  <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">
+    📤 Kirim & Tandatangani Dokumen
+  </button>
+</div>
+
+<script>
+const canvas = document.getElementById('sigCanvas');
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const w = Math.min(rect.width - 4, 600);
+    canvas.width = w;
+    canvas.style.width = w + 'px';
+    canvas.height = 180;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#1e293b';
+  }
+  resizeCanvas();
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * (canvas.width / r.width),
+             y: (src.clientY - r.top)  * (canvas.height / r.height) };
+  }
+
+  canvas.addEventListener('mousedown',  e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('mousemove',  e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+  canvas.addEventListener('mouseup',    () => drawing = false);
+  canvas.addEventListener('mouseleave', () => drawing = false);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+  canvas.addEventListener('touchend',   () => drawing = false);
+}
+
+function clearSig() {
+  const c = document.getElementById('sigCanvas');
+  c.getContext('2d').clearRect(0, 0, c.width, c.height);
+}
+
+function isCanvasBlank() {
+  const c = document.getElementById('sigCanvas');
+  const px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+  return !px.some(v => v !== 0);
+}
+
+async function submitForm() {
+  const nama     = document.getElementById('nama').value.trim();
+  const nik      = document.getElementById('nik').value.trim();
+  const jabatan  = document.getElementById('jabatan').value.trim();
+  const instansi = document.getElementById('instansi').value.trim();
+  const msgArea  = document.getElementById('msg-area');
+
+  msgArea.innerHTML = '';
+
+  if (!nama || !nik) {
+    showMsg('error', '❌ Nama Lengkap dan NIK/NIP wajib diisi.');
+    return;
+  }
+  if (isCanvasBlank()) {
+    showMsg('error', '❌ Silakan buat tanda tangan terlebih dahulu.');
+    return;
+  }
+
+  const sigData = document.getElementById('sigCanvas').toDataURL('image/png');
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Memproses...';
+
+  try {
+    const res  = await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nama, nik, jabatan, instansi,
+        signature_data: sigData
+      })
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      document.querySelector('.card').innerHTML = `
+        <div class="done-box">
+          <div class="icon">✅</div>
+          <h3>Berhasil Ditandatangani!</h3>
+          <p>Dokumen Anda telah berhasil disimpan. Terima kasih, <strong>${nama}</strong>!</p>
+          <br>
+          <a href="/download/${json.id}" class="btn btn-submit"
+             style="display:inline-block;width:auto;text-decoration:none;margin-top:10px;">
+            ⬇ Download PDF Anda
+          </a>
+        </div>`;
+    } else {
+      showMsg('error', '❌ ' + json.error);
+      btn.disabled = false;
+      btn.textContent = '📤 Kirim & Tandatangani Dokumen';
+    }
+  } catch (e) {
+    showMsg('error', '❌ Terjadi kesalahan jaringan. Coba lagi.');
+    btn.disabled = false;
+    btn.textContent = '📤 Kirim & Tandatangani Dokumen';
+  }
+}
+
+function showMsg(type, text) {
+  document.getElementById('msg-area').innerHTML =
+    `<div class="alert alert-${type}">${text}</div>`;
+}
+</script>
+</body>
+</html>
