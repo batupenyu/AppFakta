@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+signed_pdfs/
+*.pdf
+status_peserta.json
+submissions.json
+.env
+.vercel/

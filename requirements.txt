@@ -1,0 +1,4 @@
+flask
+weasyprint
+pillow
+jinja2
