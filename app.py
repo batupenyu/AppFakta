@@ -353,10 +353,14 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
 
     sig_img = Image(sig_stream, width=120, height=50, hAlign="CENTER")
 
+    # witness_rows = [
+    #     [Paragraph("Disaksikan/Diketahui:", styles["sig_label"])],
+    #     [Paragraph("Atasan Langsung", styles["sig_label"])],
+    #     [Paragraph("Kepala SMK Negeri 1 Koba", styles["sig_label"])],
+    # ]
+
     witness_rows = [
-        [Paragraph("Disaksikan/Diketahui:", styles["sig_label"])],
-        [Paragraph("Atasan Langsung", styles["sig_label"])],
-        [Paragraph("Kepala SMK Negeri 1 Koba", styles["sig_label"])],
+        [Paragraph("Disaksikan/Diketahui:<br/>Atasan Langsung<br/>Kepala SMK Negeri 1 Koba", styles["sig_label"])],
     ]
     if os.path.exists("ttd.jpg"):
         witness_rows.append([Image("ttd.jpg", width=100, height=45, hAlign="CENTER")])
