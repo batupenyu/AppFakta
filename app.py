@@ -286,7 +286,7 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     elements = []
 
     if os.path.exists("logo_babel.jpg"):
-        elements.append(Image("logo_babel.jpg", width=60, hAlign="CENTER"))
+        elements.append(Image("logo_babel.jpg", hAlign="CENTER", height=30))
         elements.append(Spacer(1, 0.2 * cm))
 
     elements.append(Paragraph("PEMERINTAH PROVINSI KEPULAUAN BANGKA BELITUNG", styles["center_header"]))
@@ -390,7 +390,7 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     sig_section = Table([[witness_tbl, signer_tbl]], colWidths=[col_width, col_width])
     sig_section.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("LEFTPADDING", (0, 0), (-1, -1), 50),
         ("RIGHTPADDING", (0, 0), (-1, -1), 0),
         ("TOPPADDING", (0, 0), (-1, -1), 0),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
