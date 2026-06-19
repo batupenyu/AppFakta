@@ -286,14 +286,14 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     elements = []
 
     if os.path.exists("logo_babel.jpg"):
-        elements.append(Image("logo_babel.jpg", width=60, height=30, hAlign="CENTER"))
+        elements.append(Image("logo_babel.jpg", width=50, hAlign="CENTER"))
         elements.append(Spacer(1, 0.2 * cm))
 
     elements.append(Paragraph("PEMERINTAH PROVINSI KEPULAUAN BANGKA BELITUNG", styles["center_header"]))
     elements.append(Paragraph("PAKTA INTEGRITAS", styles["title"]))
-    elements.append(Spacer(1, 0.4 * cm))
-
-    section_title = f"Saya, {nama}, selaku {jabatan} pada SMK Negeri 1 Koba, menyatakan sebagai berikut:"
+    elements.append(Spacer(1, 0.6 * cm))
+    elements.append(Paragraph(f"Saya, {nama}, selaku {jabatan} pada SMK Negeri 1 Koba, menyatakan sebagai berikut:", styles["section"]))
+    elements.append(Spacer(1, 0.5 * cm))
 
     items_l = [
         ("1.", "Berperan secara pro aktif dalam upaya pencegahan dan pemberantasan Korupsi. Kolusi dan Nepotisme serta tidak melibatkan diri dalam perbuatan tercela;"),
@@ -316,9 +316,7 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     num_col_w = 0.8 * cm
     txt_col_w = col_width - num_col_w - 0.2 * cm
 
-    header_row = [Paragraph("", styles["item_text"]), Paragraph(f"<b>{section_title}</b>", styles["section"])]
-
-    left_rows = [header_row] + [make_item_row(n, t) for n, t in items_l]
+    left_rows = [make_item_row(n, t) for n, t in items_l]
     right_rows = [make_item_row(n, t) for n, t in items_r]
 
     left_tbl = Table(left_rows, colWidths=[num_col_w, txt_col_w])
