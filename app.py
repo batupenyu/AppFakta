@@ -373,6 +373,7 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
 
     signer_rows = [
         [Paragraph("Pembuat Pernyataan", styles["sig_label"])],
+        [Paragraph(jabatan, styles["sig_label"])],
         [sig_img],
         [Paragraph(nama, styles["sig_name"])],
         [Paragraph(f"NIP. {nik}", styles["sig_label"])],
