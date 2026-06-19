@@ -308,26 +308,31 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
         ("8.", "Bila saya melanggar hal-hal tersebut di atas, saya siap menghadapi konsekuensinya."),
     ]
 
-    def make_item_rows(n, t):
-        return [Paragraph(f"<b>{n}</b> {t}", styles["item_text"])]
+    def make_item_row(n, t):
+        num_para = Paragraph(f"<b>{n}</b>", styles["item_text"])
+        txt_para = Paragraph(t, styles["item_text"])
+        return [num_para, txt_para]
 
-    left_rows = [make_item_rows(n, t) for n, t in items_l]
-    right_rows = [make_item_rows(n, t) for n, t in items_r]
+    num_col_w = 0.8 * cm
+    txt_col_w = col_width - num_col_w - 0.2 * cm
 
-    left_tbl = Table(left_rows, colWidths=[col_width - 0.5 * cm])
+    left_rows = [make_item_row(n, t) for n, t in items_l]
+    right_rows = [make_item_row(n, t) for n, t in items_r]
+
+    left_tbl = Table(left_rows, colWidths=[num_col_w, txt_col_w])
     left_tbl.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ("LEFTPADDING", (0, 0), (-1, -1), 0),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (1, 0), (1, -1), 3),
         ("TOPPADDING", (0, 0), (-1, -1), 2),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
     ]))
 
-    right_tbl = Table(right_rows, colWidths=[col_width - 0.5 * cm])
+    right_tbl = Table(right_rows, colWidths=[num_col_w, txt_col_w])
     right_tbl.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ("LEFTPADDING", (0, 0), (-1, -1), 0),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (1, 0), (1, -1), 3),
         ("TOPPADDING", (0, 0), (-1, -1), 2),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
     ]))
