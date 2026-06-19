@@ -286,7 +286,7 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     elements = []
 
     if os.path.exists("logo_babel.jpg"):
-        elements.append(Image("logo_babel.jpg", width=100, hAlign="CENTER"))
+        elements.append(Image("logo_babel.jpg", width=60, hAlign="CENTER"))
         elements.append(Spacer(1, 0.2 * cm))
 
     elements.append(Paragraph("PEMERINTAH PROVINSI KEPULAUAN BANGKA BELITUNG", styles["center_header"]))
