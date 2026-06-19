@@ -362,6 +362,7 @@ def fill_pdf(output_path, nama, nik, jabatan, instansi, signature_bytes):
     witness_rows = [
         [Paragraph("Disaksikan/Diketahui:<br/>Atasan Langsung<br/>Kepala SMK Negeri 1 Koba", styles["sig_label"])],
     ]
+    
     if os.path.exists("ttd.jpg"):
         witness_rows.append([Image("ttd.jpg", width=100, height=45, hAlign="CENTER")])
     witness_rows.append([Paragraph("SYAHRYANTO, S.T., M.Pd.", styles["sig_name"])])
