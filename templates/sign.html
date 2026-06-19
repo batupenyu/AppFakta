@@ -161,7 +161,7 @@ async function submitForm() {
   btn.textContent = '⏳ Memproses...';
 
   try {
-    const res  = await fetch('/api/submit', {
+    const res  = await fetch('/do/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

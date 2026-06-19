@@ -183,7 +183,7 @@ async function saveEdit() {
     instansi: document.getElementById('editInstansi').value.trim(),
   };
   try {
-    const res  = await fetch(`/api/edit/${currentEditId}`, {
+    const res  = await fetch(`/do/edit/${currentEditId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -209,7 +209,7 @@ function filterTable() {
 async function deleteRow(id) {
   if (!confirm('Yakin ingin menghapus data peserta ini?')) return;
   try {
-    const res  = await fetch(`/api/delete/${id}`, { method: 'DELETE' });
+    const res  = await fetch(`/do/delete/${id}`, { method: 'DELETE' });
     const json = await res.json();
     if (json.success) {
       showToast('Data berhasil dihapus');

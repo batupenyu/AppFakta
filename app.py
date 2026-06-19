@@ -61,7 +61,7 @@ def sign_page():
     return render_template("sign.html")
 
 
-@app.route("/api/submit", methods=["POST"])
+@app.route("/do/submit", methods=["POST"])
 def submit_signature():
     """
     Terima data dari form:
@@ -137,7 +137,7 @@ def download_pdf(sub_id):
     )
 
 
-@app.route("/api/delete/<sub_id>", methods=["DELETE"])
+@app.route("/do/delete/<sub_id>", methods=["DELETE"])
 def delete_submission(sub_id):
     global submissions
     sub = next((s for s in submissions if s["id"] == sub_id), None)
@@ -156,7 +156,7 @@ def delete_submission(sub_id):
     return jsonify({"success": True})
 
 
-@app.route("/api/edit/<sub_id>", methods=["PUT"])
+@app.route("/do/edit/<sub_id>", methods=["PUT"])
 def edit_submission(sub_id):
     global submissions
     sub = next((s for s in submissions if s["id"] == sub_id), None)
@@ -232,7 +232,7 @@ def edit_submission(sub_id):
     })
 
 
-@app.route("/api/status")
+@app.route("/do/status")
 def api_status():
     """API: ringkasan status"""
     return jsonify({
