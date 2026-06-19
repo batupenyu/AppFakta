@@ -78,7 +78,7 @@
   </div>
   <div class="field">
     <label>Instansi / Unit Kerja</label>
-    <input type="text" id="instansi" placeholder="Nama instansi atau unit kerja">
+    <input type="text" id="instansi" value="SMK Negeri 1 Koba" placeholder="Nama instansi atau unit kerja" autocomplete="off">
   </div>
 
   <h2 style="margin-top:24px;">🖊️ Tanda Tangan</h2>
@@ -99,6 +99,11 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const instansi = document.getElementById('instansi');
+  if (instansi) instansi.value = 'SMK Negeri 1 Koba';
+});
+
 const canvas = document.getElementById('sigCanvas');
 if (canvas) {
   const ctx = canvas.getContext('2d');

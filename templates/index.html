@@ -148,7 +148,7 @@
         <option value="Analis Sumber Daya Manusia Aparatu Ahli Muda">Analis Sumber Daya Manusia Aparatu Ahli Muda</option>
       </select>
     </div>
-    <div class="field"><label>Instansi / Unit Kerja</label><input type="text" id="editInstansi"></div>
+    <div class="field"><label>Instansi / Unit Kerja</label><input type="text" id="editInstansi" value="SMK Negeri 1 Koba"></div>
     <div style="display:flex; gap:10px; margin-top:18px;">
       <button class="btn btn-submit" onclick="saveEdit()" style="flex:1;">💾 Simpan Perubahan</button>
       <button class="btn" onclick="closeEditModal()" style="background:#e5e7eb; color:#374151; flex:1;">Batal</button>
@@ -173,7 +173,7 @@ function openEditModal(id, nama, nik, jabatan, instansi) {
   document.getElementById('editNama').value = nama;
   document.getElementById('editNik').value = nik;
   document.getElementById('editJabatan').value = jabatan;
-  document.getElementById('editInstansi').value = instansi;
+  document.getElementById('editInstansi').value = instansi || 'SMK Negeri 1 Koba';
   const modal = document.getElementById('editModal');
   modal.style.display = 'flex';
 }
