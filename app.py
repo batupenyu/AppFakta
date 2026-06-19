@@ -18,7 +18,7 @@ app.config['SIGNED_DIR'] = '/tmp/signed_pdfs' if os.path.exists('/tmp') else 'si
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB
 CORS(app)
 
-SUBMISSIONS_FILE = "submissions.json"
+SUBMISSIONS_FILE = "/tmp/submissions.json" if os.path.exists('/tmp') else "submissions.json"
 
 
 def load_submissions():
